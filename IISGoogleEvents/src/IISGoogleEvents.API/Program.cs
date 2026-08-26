@@ -1,25 +1,70 @@
+using System.Text.Json.Serialization;
+using IISGoogleEvents.API.Abstractions.Exceptions;
+using IISGoogleEvents.API.Extensions;
+using IISGoogleEvents.Application;
+using IISGoogleEvents.Application.Configurations;
+using IISGoogleEvents.Infrastructure;
+using IISGoogleEvents.Repository;
+
+// Before CreateBuilder: it snapshots the environment when it builds the configuration.
+DotEnv.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddAppConfiguration(builder.Configuration);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddRepository(builder.Configuration.GetDbConnectionString());
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
+var corsConfig = builder.Configuration.GetSection(nameof(CorsConfig)).Get<CorsConfig>()!;
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(corsConfig.AllowedOrigins)
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+
+        if (corsConfig.AllowCredentials)
+            policy.AllowCredentials();
+    });
+});
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    await app.ApplyMigrationsAsync();
+    await app.SeedDataAsync();
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

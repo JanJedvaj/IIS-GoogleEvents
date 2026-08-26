@@ -3,12 +3,29 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
 # Rider / JetBrains
 .idea/
 *.iml
 
+# Visual Studio / VS Code
+.vs/
+.vscode/
+
 # macOS
 .DS_Store
 
-# Local secrets
+# Node (frontend)
+node_modules/
+dist/
+
+# ---- Secrets: never commit ----
+# Real values live in .env, which is ignored. .env.example is the committed template.
+.env
+.env.*
+!.env.example
 appsettings.*.Local.json
+# Google service-account key files and anything else credential-shaped (Phase 3).
+secrets/
+*.pem
+*.pfx
