@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISGoogleEvents.API", "src\IISGoogleEvents.API\IISGoogleEvents.API.csproj", "{AAF3649D-D4B3-4448-AE00-5C0C03019705}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISGoogleEvents.Application", "src\IISGoogleEvents.Application\IISGoogleEvents.Application.csproj", "{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISGoogleEvents.Domain", "src\IISGoogleEvents.Domain\IISGoogleEvents.Domain.csproj", "{639DE844-C35C-4073-AE9D-1E35D3B4F02D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISGoogleEvents.Infrastructure", "src\IISGoogleEvents.Infrastructure\IISGoogleEvents.Infrastructure.csproj", "{80B5D990-5FC7-4099-BE6C-99B25BC93E33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISGoogleEvents.Repository", "src\IISGoogleEvents.Repository\IISGoogleEvents.Repository.csproj", "{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAF3649D-D4B3-4448-AE00-5C0C03019705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF3649D-D4B3-4448-AE00-5C0C03019705}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF3649D-D4B3-4448-AE00-5C0C03019705}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF3649D-D4B3-4448-AE00-5C0C03019705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{639DE844-C35C-4073-AE9D-1E35D3B4F02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{639DE844-C35C-4073-AE9D-1E35D3B4F02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{639DE844-C35C-4073-AE9D-1E35D3B4F02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{639DE844-C35C-4073-AE9D-1E35D3B4F02D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80B5D990-5FC7-4099-BE6C-99B25BC93E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80B5D990-5FC7-4099-BE6C-99B25BC93E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80B5D990-5FC7-4099-BE6C-99B25BC93E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80B5D990-5FC7-4099-BE6C-99B25BC93E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AAF3649D-D4B3-4448-AE00-5C0C03019705} = {45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}
+		{5D3A1598-8F86-43C6-AC3F-E608E6D1F9D0} = {45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}
+		{639DE844-C35C-4073-AE9D-1E35D3B4F02D} = {45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}
+		{80B5D990-5FC7-4099-BE6C-99B25BC93E33} = {45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}
+		{1C444D65-14AD-4606-AC6F-DE8BCA5DEB4D} = {45D1706B-CAE8-4641-9BAC-F1B4A015D4DC}
+	EndGlobalSection
+EndGlobal
