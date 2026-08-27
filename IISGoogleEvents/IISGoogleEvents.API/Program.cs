@@ -22,6 +22,7 @@ builder.Services.AddApplication();
 
 var dhmzConfig = builder.Configuration.GetSection(nameof(DhmzConfig)).Get<DhmzConfig>()!;
 builder.Services.AddInfrastructure(dhmzConfig);
+builder.Services.AddCalendarServiceSwitch();
 
 builder.Services.AddGrpc();
 

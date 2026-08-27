@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +40,18 @@ public class AppDbContext : DbContext
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(rt => rt.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CalendarEvent>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.GoogleEventId).IsRequired().HasMaxLength(255);
+            entity.HasIndex(e => e.GoogleEventId).IsUnique();
+            entity.Property(e => e.Summary).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.Property(e => e.Location).HasMaxLength(500);
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.HtmlLink).IsRequired().HasMaxLength(1000);
         });
     }
 }

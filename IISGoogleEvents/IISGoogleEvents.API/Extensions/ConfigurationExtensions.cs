@@ -9,6 +9,7 @@ public static class ConfigurationExtensions
         services.Configure<AppConfig>(configuration.GetSection(nameof(AppConfig)));
         services.Configure<JwtConfig>(configuration.GetSection(nameof(JwtConfig)));
         services.Configure<CorsConfig>(configuration.GetSection(nameof(CorsConfig)));
+        services.Configure<GoogleConfig>(configuration.GetSection(nameof(GoogleConfig)));
 
         return services;
     }

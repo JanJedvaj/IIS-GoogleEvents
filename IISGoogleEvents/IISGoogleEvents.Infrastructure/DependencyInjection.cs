@@ -2,7 +2,9 @@ using IISGoogleEvents.Application.Configurations;
 using IISGoogleEvents.Application.Interfaces.Security;
 using IISGoogleEvents.Infrastructure.Grpc;
 using IISGoogleEvents.Infrastructure.Security.Helpers;
+using IISGoogleEvents.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace IISGoogleEvents.Infrastructure;
 
@@ -36,6 +38,16 @@ public static class DependencyInjection
             .ConfigurePrimaryHttpMessageHandler(DhmzHttpClient.CreateIPv4OnlyHandler);
 
         services.AddScoped<DhmzGrpcService>();
+
+        // GoogleConfig resolves lazily via IOptions inside the factory delegate below,
+        // so - unlike DhmzConfig above - it needs no plain-parameter overload of its own.
+        services.AddHttpClient<GoogleCalendarHttpClient>((provider, client) =>
+        {
+            var googleConfig = provider.GetRequiredService<IOptions<GoogleConfig>>().Value;
+            client.BaseAddress = new Uri(googleConfig.BaseUrl);
+        });
+
+        services.AddScoped<ExternalCalendarEventService>();
 
         return services;
     }
