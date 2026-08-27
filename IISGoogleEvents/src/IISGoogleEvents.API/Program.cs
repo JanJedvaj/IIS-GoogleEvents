@@ -1,10 +1,14 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using IISGoogleEvents.API.Abstractions.Exceptions;
 using IISGoogleEvents.API.Extensions;
 using IISGoogleEvents.Application;
 using IISGoogleEvents.Application.Configurations;
 using IISGoogleEvents.Infrastructure;
+using IISGoogleEvents.Infrastructure.Grpc;
 using IISGoogleEvents.Repository;
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 // Before CreateBuilder: it snapshots the environment when it builds the configuration.
 DotEnv.Load();
@@ -15,7 +19,14 @@ builder.Services.AddAppConfiguration(builder.Configuration);
 
 builder.Services.AddRepository(builder.Configuration.GetDbConnectionString());
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+
+var dhmzConfig = builder.Configuration.GetSection(nameof(DhmzConfig)).Get<DhmzConfig>()!;
+builder.Services.AddInfrastructure(dhmzConfig);
+
+builder.Services.AddGrpc();
+
+var grpcConfig = builder.Configuration.GetSection(nameof(GrpcConfig)).Get<GrpcConfig>()!;
+builder.Services.AddGrpcClient<WeatherService.WeatherServiceClient>(o => o.Address = new Uri(grpcConfig.WeatherServiceUrl));
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
@@ -66,5 +77,6 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGrpcService<DhmzGrpcService>();
 
 app.Run();
