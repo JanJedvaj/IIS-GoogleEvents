@@ -1,10 +1,18 @@
 import { apiClient } from './client';
 import type {
+  CalendarCapabilitiesDto,
   CalendarEventDto,
   CreateCalendarEventDto,
   StandardResponse,
   UpdateCalendarEventDto,
 } from '../types/models';
+
+export async function getCapabilities(): Promise<StandardResponse<CalendarCapabilitiesDto>> {
+  const response = await apiClient.get<StandardResponse<CalendarCapabilitiesDto>>(
+    '/api/events/capabilities',
+  );
+  return response.data;
+}
 
 export async function searchEvents(query?: string): Promise<StandardResponse<CalendarEventDto[]>> {
   const response = await apiClient.get<StandardResponse<CalendarEventDto[]>>('/api/events', {

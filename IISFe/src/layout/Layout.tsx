@@ -21,6 +21,14 @@ export function Layout() {
           <Button component={NavLink} to="/events" color="inherit">
             Events
           </Button>
+          <Button component={NavLink} to="/graphql" color="inherit">
+            GraphQL
+          </Button>
+          {isAdmin && (
+            <Button component={NavLink} to="/import" color="inherit">
+              Import
+            </Button>
+          )}
           <Chip
             label={isAdmin ? 'Admin' : 'User'}
             color={isAdmin ? 'secondary' : 'default'}

@@ -11,6 +11,12 @@ const EventsPage = lazy(() =>
 const EventFormPage = lazy(() =>
   import('./pages/events/EventFormPage').then((m) => ({ default: m.EventFormPage })),
 );
+const GraphQlPage = lazy(() =>
+  import('./pages/graphql/GraphQlPage').then((m) => ({ default: m.GraphQlPage })),
+);
+const ImportPage = lazy(() =>
+  import('./pages/import/ImportPage').then((m) => ({ default: m.ImportPage })),
+);
 
 function App() {
   return (
@@ -25,6 +31,8 @@ function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/events/new" element={<EventFormPage />} />
             <Route path="/events/:id/edit" element={<EventFormPage />} />
+            <Route path="/graphql" element={<GraphQlPage />} />
+            <Route path="/import" element={<ImportPage />} />
           </Route>
         </Route>
 

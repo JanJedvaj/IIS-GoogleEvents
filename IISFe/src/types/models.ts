@@ -67,3 +67,17 @@ export interface UpdateCalendarEventDto {
   end?: string | null;
   isAllDay?: boolean | null;
 }
+
+export type DataSource = 'Local' | 'External';
+
+export interface CalendarCapabilitiesDto {
+  source: DataSource;
+  softDeletes: boolean;
+}
+
+export interface ImportResultDto {
+  importedCount: number;
+  xmlErrors: string[];
+  jsonErrors: string[];
+  businessErrors: string[];
+}
