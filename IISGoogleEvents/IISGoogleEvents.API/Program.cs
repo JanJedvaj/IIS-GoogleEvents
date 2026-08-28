@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using IISGoogleEvents.API.Configuration;
 using IISGoogleEvents.API.Extensions;
+using IISGoogleEvents.API.GraphQL;
 using IISGoogleEvents.API.Grpc;
 using IISGoogleEvents.API.Middleware;
 using IISGoogleEvents.Application.Configuration;
@@ -145,6 +146,12 @@ builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true
 
 builder.Services.AddGrpc();
 
+builder.Services
+    .AddGraphQLServer()
+    .AddAuthorization()
+    .AddQueryType<EventQuery>()
+    .AddMutationType<EventMutation>();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -214,6 +221,7 @@ app.MapControllers();
 app.MapGrpcService<WeatherGrpcService>()
     .EnableGrpcWeb()
     .RequireCors(CorsPolicy);
+app.MapGraphQL();
 
 app.Run();
 
