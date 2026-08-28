@@ -1,54 +1,64 @@
-using IISGoogleEvents.API.Abstractions.Controllers;
-using IISGoogleEvents.Application.Configurations;
-using IISGoogleEvents.Application.DTOs.Auth;
-using IISGoogleEvents.Application.Interfaces.Services;
+using IISGoogleEvents.Application.Configuration;
+using IISGoogleEvents.Application.Dtos.Auth;
 using IISGoogleEvents.Application.Models;
+using IISGoogleEvents.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace IISGoogleEvents.API.Controllers;
 
+[Produces("application/json")]
 public class AuthController : BaseController
 {
     private const string RefreshTokenCookie = "refreshToken";
 
-    private readonly IAuthService _authService;
-    private readonly JwtConfig _jwtConfig;
+    private readonly AuthService _authService;
+    private readonly JwtOptions _jwtOptions;
 
-    public AuthController(IAuthService authService, IOptions<JwtConfig> jwtConfig)
+    public AuthController(AuthService authService, IOptions<JwtOptions> jwtOptions)
     {
         _authService = authService;
-        _jwtConfig = jwtConfig.Value;
+        _jwtOptions = jwtOptions.Value;
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Register([FromBody] RegisterRequestDto request) =>
         HandleResponse(WithRefreshCookie(await _authService.RegisterAsync(request)));
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> Login([FromBody] LoginRequestDto request) =>
         HandleResponse(WithRefreshCookie(await _authService.LoginAsync(request)));
 
     [HttpPost("refresh")]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StandardResponse<AuthResponseDto>), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> Refresh()
     {
         var refreshToken = Request.Cookies[RefreshTokenCookie];
 
         if (string.IsNullOrEmpty(refreshToken))
             return HandleResponse(StandardResponse<AuthResponseDto>.Create(
-                ResultStatus.Unauthorized, message: "Refresh token cookie is missing."));
+                ResultStatus.Unauthorized, message: "Nedostaje cookie s refresh tokenom."));
 
         return HandleResponse(WithRefreshCookie(await _authService.RefreshTokenAsync(refreshToken)));
     }
 
     [HttpPost("signout")]
+    [ProducesResponseType(typeof(StandardResponse<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StandardResponse<bool>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(StandardResponse<bool>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> SignOutUser()
     {
         var refreshToken = Request.Cookies[RefreshTokenCookie];
 
         if (string.IsNullOrEmpty(refreshToken))
             return HandleResponse(StandardResponse<bool>.Create(
-                ResultStatus.BadRequest, false, "Refresh token cookie is missing."));
+                ResultStatus.BadRequest, false, "Nedostaje cookie s refresh tokenom."));
 
         var response = await _authService.SignOutAsync(refreshToken);
 
@@ -58,11 +68,6 @@ public class AuthController : BaseController
         return HandleResponse(response);
     }
 
-    /// <summary>
-    /// Moves the refresh token out of the response body and into an HttpOnly cookie,
-    /// so JavaScript can never read it. The access token stays in the body and is
-    /// held in memory by the client.
-    /// </summary>
     private StandardResponse<AuthResponseDto> WithRefreshCookie(StandardResponse<AuthResponseDto> response)
     {
         if (!response.Success || response.Data == null)
@@ -73,7 +78,7 @@ public class AuthController : BaseController
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtConfig.RefreshTokenExpirationInMinutes)
+            Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.RefreshTokenExpirationInMinutes)
         });
 
         response.Data.RefreshToken = string.Empty;

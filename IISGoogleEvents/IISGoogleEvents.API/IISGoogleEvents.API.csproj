@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IISGoogleEvents.Application\IISGoogleEvents.Application.csproj" />
+    <ProjectReference Include="..\IISGoogleEvents.Infrastructure\IISGoogleEvents.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
       <PrivateAssets>all</PrivateAssets>
@@ -14,14 +19,18 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.62.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.62.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IISGoogleEvents.Domain\IISGoogleEvents.Domain.csproj" />
-    <ProjectReference Include="..\IISGoogleEvents.Application\IISGoogleEvents.Application.csproj" />
-    <ProjectReference Include="..\IISGoogleEvents.Repository\IISGoogleEvents.Repository.csproj" />
-    <ProjectReference Include="..\IISGoogleEvents.Infrastructure\IISGoogleEvents.Infrastructure.csproj" />
+    <Protobuf Include="Protos\weather.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Schemas\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

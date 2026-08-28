@@ -1,38 +1,45 @@
-using Grpc.Core;
-using IISGoogleEvents.API.Abstractions.Attributes;
-using IISGoogleEvents.API.Abstractions.Controllers;
+using IISGoogleEvents.API.Authorization;
+using IISGoogleEvents.Application.Dtos.Weather;
 using IISGoogleEvents.Application.Models;
-using IISGoogleEvents.Domain.Enums;
-using IISGoogleEvents.Infrastructure.Grpc;
+using IISGoogleEvents.Application.Services;
+using IISGoogleEvents.Infrastructure.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IISGoogleEvents.API.Controllers;
 
 [AuthorizeRoles(MinRole = Roles.User)]
-public class WeatherController(WeatherService.WeatherServiceClient client) : BaseController
+[Produces("application/json")]
+public class WeatherController(DhmzWeatherService weatherService) : BaseController
 {
     [HttpGet]
-    public async Task<ActionResult> GetByCity([FromQuery] string cityName, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(StandardResponse<WeatherReadingsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StandardResponse<WeatherReadingsDto>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(StandardResponse<WeatherReadingsDto>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> GetByCity([FromQuery] string? cityName, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(cityName))
+            return HandleResponse(StandardResponse<WeatherReadingsDto>.Create(
+                ResultStatus.BadRequest, message: "Naziv grada je obavezan."));
+
         try
         {
-            var reply = await client.GetWeatherByCityAsync(
-                new WeatherRequest { CityName = cityName },
-                cancellationToken: cancellationToken);
-
-            return HandleResponse(StandardResponse<WeatherResponse>.Create(ResultStatus.Ok, reply));
+            var readings = await weatherService.GetByCityAsync(cityName, cancellationToken);
+            return HandleResponse(StandardResponse<WeatherReadingsDto>.Create(ResultStatus.Ok, readings));
         }
-        catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
+        catch (KeyNotFoundException ex)
         {
-            return HandleResponse(StandardResponse<WeatherResponse>.Create(
-                ResultStatus.NotFound,
-                message: ex.Status.Detail));
+            return HandleResponse(StandardResponse<WeatherReadingsDto>.Create(ResultStatus.NotFound, message: ex.Message));
         }
-        catch (RpcException ex)
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            return HandleResponse(StandardResponse<WeatherResponse>.Create(
-                ResultStatus.InternalError,
-                message: ex.Status.Detail));
+            return HandleResponse(StandardResponse<WeatherReadingsDto>.Create(
+                ResultStatus.InternalError, message: "DHMZ feed nije odgovorio na vrijeme."));
+        }
+        catch (HttpRequestException)
+        {
+            return HandleResponse(StandardResponse<WeatherReadingsDto>.Create(
+                ResultStatus.InternalError, message: "Nije moguće doći do DHMZ feeda."));
         }
     }
 }

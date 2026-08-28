@@ -1,41 +1,40 @@
-using IISGoogleEvents.Application.Configurations;
-using IISGoogleEvents.Application.DTOs.Auth;
-using IISGoogleEvents.Application.Interfaces.Security;
-using IISGoogleEvents.Application.Interfaces.Services;
+using IISGoogleEvents.Application.Configuration;
+using IISGoogleEvents.Application.Dtos.Auth;
 using IISGoogleEvents.Application.Models;
-using IISGoogleEvents.Domain.Entities;
-using IISGoogleEvents.Domain.Interfaces;
+using IISGoogleEvents.Application.Security;
+using IISGoogleEvents.Infrastructure.Entities;
+using IISGoogleEvents.Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
 
 namespace IISGoogleEvents.Application.Services;
 
-public class AuthService : IAuthService
+public class AuthService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly IPasswordHelper _passwordHelper;
-    private readonly ITokenHelper _tokenHelper;
-    private readonly JwtConfig _jwtConfig;
+    private readonly UserRepository _userRepository;
+    private readonly RefreshTokenRepository _refreshTokenRepository;
+    private readonly PasswordHelper _passwordHelper;
+    private readonly TokenHelper _tokenHelper;
+    private readonly JwtOptions _jwtOptions;
 
     public AuthService(
-        IUserRepository userRepository,
-        IRefreshTokenRepository refreshTokenRepository,
-        IPasswordHelper passwordHelper,
-        ITokenHelper tokenHelper,
-        IOptions<JwtConfig> jwtConfig)
+        UserRepository userRepository,
+        RefreshTokenRepository refreshTokenRepository,
+        PasswordHelper passwordHelper,
+        TokenHelper tokenHelper,
+        IOptions<JwtOptions> jwtOptions)
     {
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
         _passwordHelper = passwordHelper;
         _tokenHelper = tokenHelper;
-        _jwtConfig = jwtConfig.Value;
+        _jwtOptions = jwtOptions.Value;
     }
 
     public async Task<StandardResponse<AuthResponseDto>> RegisterAsync(RegisterRequestDto request)
     {
         var existing = await _userRepository.GetByUsernameAsync(request.Username);
         if (existing != null)
-            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Conflict, message: "Username is already taken.");
+            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Conflict, message: "Korisničko ime je već zauzeto.");
 
         var user = new User
         {
@@ -47,7 +46,7 @@ public class AuthService : IAuthService
         await _userRepository.SaveChangesAsync();
 
         var response = await IssueTokensAsync(user);
-        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Created, response, "Registration successful.");
+        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Created, response, "Registracija je uspješna.");
     }
 
     public async Task<StandardResponse<AuthResponseDto>> LoginAsync(LoginRequestDto request)
@@ -55,26 +54,40 @@ public class AuthService : IAuthService
         var user = await _userRepository.GetByUsernameAsync(request.Username);
 
         if (user == null || !_passwordHelper.VerifyPassword(request.Password, user.PasswordHash))
-            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Invalid username or password.");
+            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Neispravno korisničko ime ili lozinka.");
 
         var response = await IssueTokensAsync(user);
-        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Ok, response, "Login successful.");
+        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Ok, response, "Prijava je uspješna.");
     }
 
     public async Task<StandardResponse<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
     {
         var stored = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-        if (stored == null || !stored.IsActive)
-            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Invalid or expired refresh token.");
+        if (stored == null)
+            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Neispravan ili istekao refresh token.");
 
-        // Rotation: the presented token is spent, and a fresh one is issued alongside
-        // the new access token. A replayed token therefore fails the IsActive check.
+        if (stored.Revoked != null)
+        {
+            var revokedAt = DateTime.UtcNow;
+
+            foreach (var token in await _refreshTokenRepository.GetUnrevokedByUserIdAsync(stored.UserId))
+                token.Revoked = revokedAt;
+
+            await _refreshTokenRepository.SaveChangesAsync();
+
+            return StandardResponse<AuthResponseDto>.Create(
+                ResultStatus.Unauthorized,
+                message: "Refresh token je već iskorišten. Sve sesije su odjavljene, prijavite se ponovno.");
+        }
+
+        if (!stored.IsActive)
+            return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Neispravan ili istekao refresh token.");
+
         stored.Revoked = DateTime.UtcNow;
-        _refreshTokenRepository.Update(stored);
 
         var response = await IssueTokensAsync(stored.User);
-        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Ok, response, "Token refreshed.");
+        return StandardResponse<AuthResponseDto>.Create(ResultStatus.Ok, response, "Token je osvježen.");
     }
 
     public async Task<StandardResponse<bool>> SignOutAsync(string refreshToken)
@@ -82,16 +95,15 @@ public class AuthService : IAuthService
         var stored = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
         if (stored == null)
-            return StandardResponse<bool>.Create(ResultStatus.NotFound, false, "Refresh token not found.");
+            return StandardResponse<bool>.Create(ResultStatus.NotFound, false, "Refresh token nije nađen.");
 
         if (stored.Revoked != null)
-            return StandardResponse<bool>.Create(ResultStatus.Conflict, false, "Refresh token is already revoked.");
+            return StandardResponse<bool>.Create(ResultStatus.Conflict, false, "Refresh token je već povučen.");
 
         stored.Revoked = DateTime.UtcNow;
-        _refreshTokenRepository.Update(stored);
         await _refreshTokenRepository.SaveChangesAsync();
 
-        return StandardResponse<bool>.Create(ResultStatus.Ok, true, "Signed out.");
+        return StandardResponse<bool>.Create(ResultStatus.Ok, true, "Odjava je uspješna.");
     }
 
     private async Task<AuthResponseDto> IssueTokensAsync(User user)
@@ -104,7 +116,7 @@ public class AuthService : IAuthService
             Token = refreshToken,
             UserId = user.Id,
             Created = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddMinutes(_jwtConfig.RefreshTokenExpirationInMinutes)
+            Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.RefreshTokenExpirationInMinutes)
         });
         await _refreshTokenRepository.SaveChangesAsync();
 

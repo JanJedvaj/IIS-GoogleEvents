@@ -12,10 +12,6 @@ public enum ResultStatus
     InternalError
 }
 
-/// <summary>
-/// Uniform envelope returned by every service, so that REST, GraphQL and SOAP
-/// can each translate one shape into their own error conventions.
-/// </summary>
 public class StandardResponse<T>
 {
     public bool Success { get; set; }
