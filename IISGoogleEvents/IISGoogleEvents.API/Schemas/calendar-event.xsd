@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://iis.algebra.hr/calendar"
+           xmlns="http://iis.algebra.hr/calendar"
+           elementFormDefault="qualified">
+
+	<xs:element name="calendarEvents">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="calendarEvent" type="calendarEventType"
+							minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="calendarEventType">
+		<xs:sequence>
+			<xs:element name="googleEventId" type="googleEventIdType"/>
+			<xs:element name="summary"        type="summaryType"/>
+			<xs:element name="description"    type="descriptionType" minOccurs="0"/>
+			<xs:element name="location"       type="locationType"    minOccurs="0"/>
+			<xs:element name="start"          type="xs:dateTime"/>
+			<xs:element name="end"            type="xs:dateTime"/>
+			<xs:element name="isAllDay"       type="xs:boolean"       minOccurs="0"/>
+			<xs:element name="status"         type="statusType"       minOccurs="0"/>
+			<xs:element name="htmlLink"       type="htmlLinkType"     minOccurs="0"/>
+			<xs:element name="created"        type="xs:dateTime"      minOccurs="0"/>
+			<xs:element name="updated"        type="xs:dateTime"      minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="googleEventIdType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="summaryType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="500"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="descriptionType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="locationType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="500"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="statusType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+			<xs:enumeration value="confirmed"/>
+			<xs:enumeration value="tentative"/>
+			<xs:enumeration value="cancelled"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="htmlLinkType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1000"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

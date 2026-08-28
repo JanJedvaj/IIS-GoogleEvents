@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calendarEvents xmlns="http://iis.algebra.hr/calendar">
+  <calendarEvent>
+    <googleEventId>import-xml-001</googleEventId>
+    <summary>Uvoz iz XML-a</summary>
+    <description>Zapis uvezen kroz XSD validaciju.</description>
+    <location>Algebra</location>
+    <start>2026-09-10T10:00:00Z</start>
+    <end>2026-09-10T11:00:00Z</end>
+    <isAllDay>false</isAllDay>
+    <status>confirmed</status>
+  </calendarEvent>
+  <calendarEvent>
+    <googleEventId>import-xml-002</googleEventId>
+    <summary>Radionica</summary>
+    <description>Drugi zapis u istoj XML datoteci.</description>
+    <location>Zagreb</location>
+    <start>2026-09-11T09:00:00Z</start>
+    <end>2026-09-11T12:00:00Z</end>
+    <isAllDay>false</isAllDay>
+    <status>tentative</status>
+  </calendarEvent>
+</calendarEvents>

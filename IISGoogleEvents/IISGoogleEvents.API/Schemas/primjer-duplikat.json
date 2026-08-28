@@ -1,0 +1,18 @@
+{
+  "calendarEvents": [
+    {
+      "googleEventId": "import-xml-001",
+      "summary": "Duplikat postojeceg ID-a iz XML-a",
+      "start": "2026-09-20T10:00:00Z",
+      "end": "2026-09-20T11:00:00Z",
+      "status": "confirmed"
+    },
+    {
+      "googleEventId": "import-xml-002",
+      "summary": "Drugi duplikat postojeceg ID-a iz XML-a",
+      "start": "2026-09-21T10:00:00Z",
+      "end": "2026-09-21T11:00:00Z",
+      "status": "confirmed"
+    }
+  ]
+}

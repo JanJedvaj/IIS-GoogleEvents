@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calendarEvents xmlns="http://iis.algebra.hr/calendar">
+  <calendarEvent>
+    <googleEventId>import-nevaljan-001</googleEventId>
+    <summary>Los status</summary>
+    <start>2026-09-14T10:00:00Z</start>
+    <end>2026-09-14T11:00:00Z</end>
+    <status>nepoznat-status</status>
+  </calendarEvent>
+  <calendarEvent>
+    <googleEventId>import-nevaljan-002</googleEventId>
+    <start>2026-09-15T10:00:00Z</start>
+    <end>2026-09-15T11:00:00Z</end>
+  </calendarEvent>
+  <calendarEvent>
+    <googleEventId>import-nevaljan-003</googleEventId>
+    <summary>Nepoznato svojstvo</summary>
+    <start>2026-09-16T10:00:00Z</start>
+    <end>2026-09-16T11:00:00Z</end>
+    <nepoznatoSvojstvo>vrijednost</nepoznatoSvojstvo>
+  </calendarEvent>
+</calendarEvents>

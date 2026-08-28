@@ -24,5 +24,14 @@ public class CalendarEventRepository(AppDbContext context)
     public async Task AddAsync(CalendarEvent calendarEvent) =>
         await context.CalendarEvents.AddAsync(calendarEvent);
 
+    public async Task<List<string>> GetExistingGoogleEventIdsAsync(IEnumerable<string> googleEventIds) =>
+        await context.CalendarEvents
+            .Where(e => googleEventIds.Contains(e.GoogleEventId))
+            .Select(e => e.GoogleEventId)
+            .ToListAsync();
+
+    public async Task AddRangeAsync(IEnumerable<CalendarEvent> calendarEvents) =>
+        await context.CalendarEvents.AddRangeAsync(calendarEvents);
+
     public async Task SaveChangesAsync() => await context.SaveChangesAsync();
 }

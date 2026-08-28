@@ -73,6 +73,10 @@ builder.Services.AddHttpClient<GoogleCalendarClient>((provider, client) =>
 builder.Services.AddScoped<LocalCalendarEventService>();
 builder.Services.AddScoped<ExternalCalendarEventService>();
 
+builder.Services.AddSingleton<XmlValidationService>();
+builder.Services.AddSingleton<JsonValidationService>();
+builder.Services.AddScoped<EventImportService>();
+
 builder.Services.AddScoped<ICalendarEventService>(provider =>
 {
     var appOptions = provider.GetRequiredService<IOptions<AppOptions>>().Value;

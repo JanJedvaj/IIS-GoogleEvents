@@ -1,0 +1,23 @@
+{
+  "calendarEvents": [
+    {
+      "googleEventId": "import-nevaljan-101",
+      "summary": "Los status",
+      "start": "2026-09-17T10:00:00Z",
+      "end": "2026-09-17T11:00:00Z",
+      "status": "nepoznat-status"
+    },
+    {
+      "googleEventId": "import-nevaljan-102",
+      "start": "2026-09-18T10:00:00Z",
+      "end": "2026-09-18T11:00:00Z"
+    },
+    {
+      "googleEventId": "import-nevaljan-103",
+      "summary": "Nepoznato svojstvo",
+      "start": "2026-09-19T10:00:00Z",
+      "end": "2026-09-19T11:00:00Z",
+      "nepoznatoSvojstvo": "vrijednost"
+    }
+  ]
+}

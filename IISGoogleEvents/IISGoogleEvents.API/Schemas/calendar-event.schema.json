@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iis.algebra.hr/schemas/calendar-event.schema.json",
+  "title": "Kalendarski događaji",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "calendarEvents" ],
+  "properties": {
+    "calendarEvents": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/calendarEvent" }
+    }
+  },
+
+  "$defs": {
+    "calendarEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "googleEventId", "summary", "start", "end" ],
+      "properties": {
+        "googleEventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "description": {
+          "type": [ "string", "null" ],
+          "maxLength": 2000
+        },
+        "location": {
+          "type": [ "string", "null" ],
+          "maxLength": 500
+        },
+        "start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isAllDay": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 20,
+          "enum": [ "confirmed", "tentative", "cancelled" ]
+        },
+        "htmlLink": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

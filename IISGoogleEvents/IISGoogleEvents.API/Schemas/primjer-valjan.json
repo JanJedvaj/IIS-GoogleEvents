@@ -1,0 +1,24 @@
+{
+  "calendarEvents": [
+    {
+      "googleEventId": "import-json-001",
+      "summary": "Uvoz iz JSON-a",
+      "description": "Zapis uvezen kroz JSON Schema validaciju.",
+      "location": "Algebra",
+      "start": "2026-09-12T10:00:00Z",
+      "end": "2026-09-12T11:00:00Z",
+      "isAllDay": false,
+      "status": "confirmed"
+    },
+    {
+      "googleEventId": "import-json-002",
+      "summary": "Konzultacije",
+      "description": "Drugi zapis u istoj JSON datoteci.",
+      "location": "Zagreb",
+      "start": "2026-09-13T14:00:00Z",
+      "end": "2026-09-13T15:00:00Z",
+      "isAllDay": false,
+      "status": "confirmed"
+    }
+  ]
+}
