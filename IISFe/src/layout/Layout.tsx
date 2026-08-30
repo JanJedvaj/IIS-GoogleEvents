@@ -27,6 +27,9 @@ export function Layout() {
           <Button component={NavLink} to="/soap" color="inherit">
             SOAP
           </Button>
+          <Button component={NavLink} to="/weather" color="inherit">
+            Weather
+          </Button>
           {isAdmin && (
             <Button component={NavLink} to="/import" color="inherit">
               Import

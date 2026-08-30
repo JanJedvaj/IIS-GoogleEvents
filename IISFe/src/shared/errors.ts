@@ -7,5 +7,6 @@ export function extractErrorMessage(error: unknown, fallback: string): string {
     if (data?.errors && data.errors.length > 0) return data.errors.join(' ');
     if (data?.message) return data.message;
   }
+  if (error instanceof Error && error.message) return error.message;
   return fallback;
 }

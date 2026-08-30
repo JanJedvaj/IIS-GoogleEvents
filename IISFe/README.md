@@ -2,7 +2,22 @@
 
 React frontend for the `IISGoogleEvents` backend. Vite + React 19 + TypeScript (strict) + React Router + TanStack Query + MUI + React Hook Form/Zod + Axios.
 
-A full README (prerequisites, every surface URL, the `DataSource` switch) is Phase 8 scope per the project's implementation plan - this is a placeholder until then.
+Backend surfaces this client talks to, all proxied same-origin through `vite.config.ts`:
+
+| Surface | URL |
+|---|---|
+| REST + Swagger | `https://localhost:7008/swagger` |
+| GraphQL (Banana Cake Pop) | `https://localhost:7008/graphql` |
+| SOAP | `https://localhost:7008/soap/EventSoapService.asmx` |
+| gRPC-Web | `POST /weather.WeatherService/GetWeatherByCity` |
+
+The `AppOptions:DataSource` switch (`Local` or `External`, in `appsettings.json` or as
+`AppOptions__DataSource`) decides whether events come from local Postgres or live Google Calendar;
+the client reads it via `GET /api/events/capabilities` and labels pages accordingly.
+
+The Weather page calls the backend's gRPC service directly over gRPC-Web using a client generated
+from `IISGoogleEvents.API/Protos/weather.proto`. The generated output is committed at
+`src/gen/weather_pb.ts` - after editing the proto, re-run `npm run generate:proto`.
 
 ## Running locally
 

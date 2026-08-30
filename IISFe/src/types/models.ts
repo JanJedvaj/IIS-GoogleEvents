@@ -112,3 +112,18 @@ export interface XmlValidationResponse {
   errors: string[];
   message: string | null;
 }
+
+export interface CityWeatherDto {
+  cityName: string;
+  temperature: string;
+  humidity: string;
+  pressure: string;
+  windDirection: string;
+  windSpeed: string;
+  condition: string;
+}
+
+export interface WeatherReadingsDto {
+  results: CityWeatherDto[];
+  lastUpdated: string;
+}

@@ -33,6 +33,11 @@ export default defineConfig({
         secure: false,
         bypass: serveSpaOnNavigation,
       },
+      '/weather.WeatherService': {
+        target,
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });
