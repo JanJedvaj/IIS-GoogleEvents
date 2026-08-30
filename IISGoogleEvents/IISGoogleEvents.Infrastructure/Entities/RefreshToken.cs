@@ -4,7 +4,7 @@ namespace IISGoogleEvents.Infrastructure.Entities;
 
 public class RefreshToken : BaseEntity
 {
-    public string Token { get; set; } = null!;
+    public string TokenHash { get; set; } = null!;
     public int UserId { get; set; }
     public DateTime Created { get; set; }
     public DateTime Expires { get; set; }

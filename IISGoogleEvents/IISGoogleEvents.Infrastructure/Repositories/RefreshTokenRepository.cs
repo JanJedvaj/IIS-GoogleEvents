@@ -5,8 +5,8 @@ namespace IISGoogleEvents.Infrastructure.Repositories;
 
 public class RefreshTokenRepository(AppDbContext context)
 {
-    public async Task<RefreshToken?> GetByTokenAsync(string token) =>
-        await context.RefreshTokens.Include(rt => rt.User).FirstOrDefaultAsync(rt => rt.Token == token);
+    public async Task<RefreshToken?> GetByTokenHashAsync(string tokenHash) =>
+        await context.RefreshTokens.Include(rt => rt.User).FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash);
 
     public async Task<List<RefreshToken>> GetUnrevokedByUserIdAsync(int userId) =>
         await context.RefreshTokens

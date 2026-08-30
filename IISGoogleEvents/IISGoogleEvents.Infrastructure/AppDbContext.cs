@@ -29,8 +29,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<RefreshToken>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Token).IsRequired().HasMaxLength(256);
-            entity.HasIndex(e => e.Token).IsUnique();
+            entity.Property(e => e.TokenHash).IsRequired().HasMaxLength(64);
+            entity.HasIndex(e => e.TokenHash).IsUnique();
 
             entity.Ignore(e => e.IsExpired);
             entity.Ignore(e => e.IsActive);

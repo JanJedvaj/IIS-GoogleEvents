@@ -62,7 +62,7 @@ public class AuthService
 
     public async Task<StandardResponse<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
     {
-        var stored = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+        var stored = await _refreshTokenRepository.GetByTokenHashAsync(_tokenHelper.HashRefreshToken(refreshToken));
 
         if (stored == null)
             return StandardResponse<AuthResponseDto>.Create(ResultStatus.Unauthorized, message: "Neispravan ili istekao refresh token.");
@@ -92,7 +92,7 @@ public class AuthService
 
     public async Task<StandardResponse<bool>> SignOutAsync(string refreshToken)
     {
-        var stored = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+        var stored = await _refreshTokenRepository.GetByTokenHashAsync(_tokenHelper.HashRefreshToken(refreshToken));
 
         if (stored == null)
             return StandardResponse<bool>.Create(ResultStatus.NotFound, false, "Refresh token nije nađen.");
@@ -113,7 +113,7 @@ public class AuthService
 
         await _refreshTokenRepository.AddAsync(new RefreshToken
         {
-            Token = refreshToken,
+            TokenHash = _tokenHelper.HashRefreshToken(refreshToken),
             UserId = user.Id,
             Created = DateTime.UtcNow,
             Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.RefreshTokenExpirationInMinutes)
