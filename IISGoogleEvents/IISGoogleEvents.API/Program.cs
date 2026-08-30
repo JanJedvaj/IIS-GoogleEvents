@@ -6,6 +6,7 @@ using IISGoogleEvents.API.Extensions;
 using IISGoogleEvents.API.GraphQL;
 using IISGoogleEvents.API.Grpc;
 using IISGoogleEvents.API.Middleware;
+using IISGoogleEvents.API.Soap;
 using IISGoogleEvents.Application.Configuration;
 using IISGoogleEvents.Application.Constants;
 using IISGoogleEvents.Application.Interfaces;
@@ -21,6 +22,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SoapCore;
 
 const string CorsPolicy = "ClientCors";
 
@@ -85,6 +87,16 @@ builder.Services.AddScoped<ICalendarEventService>(provider =>
         ? provider.GetRequiredService<LocalCalendarEventService>()
         : provider.GetRequiredService<ExternalCalendarEventService>();
 });
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped(provider => new XmlExportService(
+    provider.GetRequiredService<LocalCalendarEventService>(),
+    Path.Combine(provider.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "Generated")));
+
+builder.Services.AddScoped<EventXPathSearchService>();
+builder.Services.AddScoped<IEventSoapService, EventSoapService>();
+builder.Services.AddSoapCore();
 
 var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
     ?? throw new InvalidOperationException($"Nedostaje sekcija {JwtOptions.SectionName}.");
@@ -226,6 +238,14 @@ app.MapGrpcService<WeatherGrpcService>()
     .EnableGrpcWeb()
     .RequireCors(CorsPolicy);
 app.MapGraphQL();
+
+IEndpointRouteBuilder endpoints = app;
+
+endpoints.UseSoapEndpoint<IEventSoapService>(
+        "/soap/EventSoapService.asmx",
+        new SoapEncoderOptions(),
+        SoapSerializer.DataContractSerializer)
+    .RequireCors(CorsPolicy);
 
 app.Run();
 

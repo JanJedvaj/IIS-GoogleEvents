@@ -17,6 +17,9 @@ const GraphQlPage = lazy(() =>
 const ImportPage = lazy(() =>
   import('./pages/import/ImportPage').then((m) => ({ default: m.ImportPage })),
 );
+const SoapPage = lazy(() =>
+  import('./pages/soap/SoapPage').then((m) => ({ default: m.SoapPage })),
+);
 
 function App() {
   return (
@@ -33,6 +36,7 @@ function App() {
             <Route path="/events/:id/edit" element={<EventFormPage />} />
             <Route path="/graphql" element={<GraphQlPage />} />
             <Route path="/import" element={<ImportPage />} />
+            <Route path="/soap" element={<SoapPage />} />
           </Route>
         </Route>
 

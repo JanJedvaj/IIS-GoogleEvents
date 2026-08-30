@@ -81,3 +81,34 @@ export interface ImportResultDto {
   jsonErrors: string[];
   businessErrors: string[];
 }
+
+export interface XmlExportResultDto {
+  filePath: string;
+  eventCount: number;
+  generatedAt: string;
+}
+
+export interface EventSearchResultDto {
+  googleEventId: string;
+  summary: string;
+  description: string | null;
+  location: string | null;
+  start: string;
+  end: string;
+  status: string;
+  matchedIn: string;
+}
+
+export interface EventSearchResponse {
+  searchTerm: string;
+  totalFound: number;
+  results: EventSearchResultDto[];
+  message: string | null;
+}
+
+export interface XmlValidationResponse {
+  isValid: boolean;
+  eventCount: number;
+  errors: string[];
+  message: string | null;
+}

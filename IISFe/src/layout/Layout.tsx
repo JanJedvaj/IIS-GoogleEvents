@@ -24,6 +24,9 @@ export function Layout() {
           <Button component={NavLink} to="/graphql" color="inherit">
             GraphQL
           </Button>
+          <Button component={NavLink} to="/soap" color="inherit">
+            SOAP
+          </Button>
           {isAdmin && (
             <Button component={NavLink} to="/import" color="inherit">
               Import
