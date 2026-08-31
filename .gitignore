@@ -30,3 +30,5 @@ appsettings.*.Local.json
 secrets/
 *.pem
 *.pfx
+.playwright-mcp/
+.mcp.json
